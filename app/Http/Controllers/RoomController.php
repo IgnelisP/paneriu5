@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class RoomController extends Controller
 {
@@ -11,7 +15,11 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        $rooms = Room::paginate(10)->withQueryString();
+
+        return Inertia::render('Rooms/Index', [
+            'rooms' => $rooms,
+        ]);
     }
 
     /**
@@ -27,7 +35,21 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'unique:rooms|required|string|max:255',
+            'floor' => 'required|integer',
+            'size' => 'required|numeric',
+            'window_direction' => 'nullable|string|max:255',
+        ]);
+
+        Room::create([
+            'name' => $validatedData['name'],
+            'floor' => $validatedData['floor'],
+            'size' => $validatedData['size'],
+            'window_direction' => $validatedData['window_direction'],
+        ]);
+
+        return Redirect::route('rooms.index')->with('success', 'Patalpa pridėta sėkmingai!');
     }
 
     /**

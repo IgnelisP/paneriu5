@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->integer('floor');
             $table->float('size');
             $table->string('window_direction')->nullable();
